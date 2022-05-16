@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const feedback = require("../models/feedback");
 const Feedback = require("../models/feedback");
 
 //Create User Feedback
@@ -33,7 +32,7 @@ router.put("/:id", async (req, res) => {
 //Delete
 router.delete("/:id", async (req, res) => {
     try{
-        await feedback.findByIdAndDelete(req.params.id);
+        await Feedback.findByIdAndDelete(req.params.id);
         res.status(200).json("Feedback has been deleted");
     } catch (err) {
         res.status(500).json(err);
@@ -61,5 +60,3 @@ router.get("/", checkToken, async (req, res) => {
 });
 
 module.exports = router
-
-module.exports = router;
