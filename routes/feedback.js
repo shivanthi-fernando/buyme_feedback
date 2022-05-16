@@ -1,36 +1,43 @@
 const router = require("express").Router();
 const Feedback = require("../models/feedback");
+const { checkToken } = require('../middleware/auth/tokenvalidation');
+const feedback = require("../models/feedback");
 
 //Create User Feedback
-router.post("/", async(req, res) => {
-    const newUserFeedback = new Feedback(req.body);
-
+router.post("/add-feedback", checkToken, async(req, res) => {
+   
     try{
-        const savedUserFeedback = await newUserFeedback.save();
-        res.status(200).json(savedUserFeedback);
+        
+        await Feedback.create({
+            userId: req.user.userID,
+            feedback: feedback.populate,
+        })
+
+        res.status(200).json({msg:'New feedback is created',success:true});
     }catch (err){
         res.status(500).json(err);
     }
 });
 
 //Update User Feedback
-router.put("/:id", async (req, res) => {
+router.put("/edit-feedback", checkToken, async (req, res) => {
     try{
-        const updateUserFeedback = await Feedback.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: req.body,
-            },
-            {new: true}
-        );
-        res.status(200).json(updateUserFeedback);
+        let feedback = await Feedback.findById(feedback_id);
+
+        if (!feedback) {
+            res.status(500).json({ err: 'Item not found in the feedback', success: false })
+        }
+
+        await Feedback.findByIdAndUpdate(req.body.feedback_id, {
+            'feedback.quantity': req.body.quantity
+        })
     }catch (err) {
         res.status(500).json(err);
     } 
 });
 
 //Delete
-router.delete("/:id", async (req, res) => {
+router.delete("/delete-feedback/:id", checkToken, async (req, res) => {
     try{
         await Feedback.findByIdAndDelete(req.params.id);
         res.status(200).json("Feedback has been deleted");
@@ -39,18 +46,8 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
-//Get User Feedback
-router.get("/find/:userId", async(req, res) => {
-    try{
-        const feedback = await Feedback.findOne({userId: req.params.userId});
-        res.status(200).json(feedback);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
-
 //Get All User Feedbacks
-router.get("/", checkToken, async (req, res) => {
+router.get("/get-all-feedbacks", checkToken, async (req, res) => {
     try{
         const feedbacks = await Feedback.find()
         res.status(200).json(feedbacks);
