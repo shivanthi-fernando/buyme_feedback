@@ -15,6 +15,6 @@ mongoose
 
 app.use("/", feedbackRoute);
 
-app.listen(process.env.PORT ||5001, ()=>{
+app.listen(process.env.PORT, ()=>{
     console.log("Backend Server is Running");
 });
