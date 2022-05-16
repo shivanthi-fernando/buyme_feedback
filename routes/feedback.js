@@ -10,7 +10,7 @@ router.post("/add-feedback", checkToken, async(req, res) => {
         
         await Feedback.create({
             userId: req.user.userID,
-            feedback: feedback.populate,
+            feedback: req.body.populate,
         })
 
         res.status(200).json({msg:'New feedback is created',success:true});
@@ -22,14 +22,14 @@ router.post("/add-feedback", checkToken, async(req, res) => {
 //Update User Feedback
 router.put("/edit-feedback", checkToken, async (req, res) => {
     try{
-        let feedback = await Feedback.findById(feedback_id);
+        let feedback = await Feedback.findById(req.body.feedback_id);
 
         if (!feedback) {
             res.status(500).json({ err: 'Item not found in the feedback', success: false })
         }
 
         await Feedback.findByIdAndUpdate(req.body.feedback_id, {
-            'feedback.quantity': req.body.quantity
+            feedback: req.body.feedback
         })
     }catch (err) {
         res.status(500).json(err);
