@@ -8,4 +8,4 @@ const FeedbackSchema = new mongoose.Schema(
     {timestamps: true}
 );
 
-module.exports = mongoose.model("UserFeedback", FeedbackSchema);
+module.exports = mongoose.model("Feedback", FeedbackSchema);
